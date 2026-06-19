@@ -1,0 +1,28 @@
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.filter-tab {
+  padding: 8px 24px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background: #fff;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-tab:hover {
+  border-color: #e8457e;
+  color: #e8457e;
+}
+
+.filter-tab.active {
+  background: #e8457e;
+  color: #fff;
+  border-color: #e8457e;
+}
