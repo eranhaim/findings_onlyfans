@@ -1,0 +1,30 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+
+  server:
+    build: ./server
+    restart: unless-stopped
+    environment:
+      PORT: "5000"
+      MONGODB_URI: mongodb://mongo:27017/fansfinder
+      ADMIN_PASSWORD: admin123
+    depends_on:
+      - mongo
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: /api
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo_data:
