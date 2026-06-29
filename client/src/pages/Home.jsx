@@ -58,11 +58,6 @@ export default function Home() {
     loadProfiles(activeFilter, searchQuery, nextPage);
   };
 
-  const today = new Date().toLocaleDateString(
-    i18n.language === 'he' ? 'he-IL' : i18n.language === 'fr' ? 'fr-FR' : 'en-US',
-    { year: 'numeric', month: 'long', day: 'numeric' }
-  );
-
   return (
     <div className="app" dir={isRtl ? 'rtl' : 'ltr'}>
       <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
@@ -72,9 +67,6 @@ export default function Home() {
         <Breadcrumb />
 
         <h1 className="page-title">{t('pageTitle')}</h1>
-        <p className="last-updated">
-          {t('lastUpdated')} {today}
-        </p>
 
         <div className="profiles-list">
           {loading && profiles.length === 0 ? (
