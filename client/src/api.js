@@ -34,8 +34,14 @@ export const detectLocation = async () => {
   }
 };
 
+const S3_BASE = 'https://telescope-media-us.s3.us-east-1.amazonaws.com/';
+
 export const getS3Url = (s3Key) => {
   if (!s3Key) return '';
+  if (s3Key.startsWith(S3_BASE)) {
+    const key = s3Key.replace(S3_BASE, '');
+    return `${API_BASE}/s3/proxy/${key}`;
+  }
   if (s3Key.startsWith('http')) return s3Key;
   return `${API_BASE}/s3/proxy/${s3Key}`;
 };
