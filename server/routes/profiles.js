@@ -4,7 +4,7 @@ const Profile = require('../models/Profile');
 
 router.get('/', async (req, res) => {
   try {
-    const { category, search, page = 1, limit = 20 } = req.query;
+    const { category, search, location, page = 1, limit = 20 } = req.query;
     const query = {};
 
     if (category && category !== 'all') {
@@ -12,9 +12,13 @@ router.get('/', async (req, res) => {
         query.isFree = true;
       } else if (category === 'new') {
         query.isNewModel = true;
-      } else {
+      } else if (category !== 'near') {
         query.category = category;
       }
+    }
+
+    if (location) {
+      query.location = { $regex: location, $options: 'i' };
     }
 
     if (search) {
@@ -23,6 +27,7 @@ router.get('/', async (req, res) => {
         { username: { $regex: search, $options: 'i' } },
         { 'bio.en': { $regex: search, $options: 'i' } },
         { tags: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } },
       ];
     }
 

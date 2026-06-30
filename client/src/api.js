@@ -25,6 +25,21 @@ export const detectLanguage = async () => {
   }
 };
 
+export const detectLocation = async () => {
+  try {
+    const { data } = await api.get('/geo/location');
+    return data;
+  } catch {
+    return { country: 'unknown', region: '', city: '' };
+  }
+};
+
+export const getS3Url = (s3Key) => {
+  if (!s3Key) return '';
+  if (s3Key.startsWith('http')) return s3Key;
+  return `${API_BASE}/s3/proxy/${s3Key}`;
+};
+
 // ── Admin API ──
 
 function authHeaders() {

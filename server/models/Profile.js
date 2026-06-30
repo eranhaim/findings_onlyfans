@@ -41,6 +41,7 @@ const profileSchema = new mongoose.Schema({
   hair: { type: String, default: '' },
   eyes: { type: String, default: '' },
   isVerified: { type: Boolean, default: false },
+  previewVideo: { type: String, default: '' },
 
   createdAt: { type: Date, default: Date.now },
 });

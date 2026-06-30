@@ -26,3 +26,19 @@
   color: #fff;
   border-color: #e8457e;
 }
+
+.near-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.near-icon {
+  font-size: 13px;
+}
+
+.near-city {
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.85;
+}

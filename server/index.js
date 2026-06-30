@@ -6,6 +6,8 @@ require('dotenv').config();
 const profileRoutes = require('./routes/profiles');
 const geoRoutes = require('./routes/geo');
 const adminRoutes = require('./routes/admin');
+const s3ProxyRoutes = require('./routes/s3proxy');
+const s3proxyRoutes = require('./routes/s3proxy');
 
 const app = express();
 
@@ -17,6 +19,8 @@ app.set('trust proxy', true);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/geo', geoRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/s3', s3ProxyRoutes);
+app.use('/api/s3', s3proxyRoutes);
 
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/fansfinder';

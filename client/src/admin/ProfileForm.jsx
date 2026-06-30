@@ -18,6 +18,7 @@ const EMPTY_PROFILE = {
   bio: { en: '', he: '', fr: '' },
   tags: '',
   category: 'popular',
+  previewVideo: '',
   onlyfansLink: '',
   socialLinks: {
     instagram: '',
@@ -203,6 +204,10 @@ export default function ProfileForm() {
               <div className="form-group full">
                 <label>OnlyFans Link</label>
                 <input type="url" className="admin-input" value={form.onlyfansLink} onChange={(e) => set('onlyfansLink', e.target.value)} placeholder="https://onlyfans.com/username" />
+              </div>
+              <div className="form-group full">
+                <label>Preview Video URL (shown on hover)</label>
+                <input type="url" className="admin-input" value={form.previewVideo} onChange={(e) => set('previewVideo', e.target.value)} placeholder="https://... or S3 key (e.g. profiles/.../media/video.mp4)" />
               </div>
               <div className="form-group">
                 <label>Price ($)</label>

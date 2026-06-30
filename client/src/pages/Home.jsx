@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterTabs from '../components/FilterTabs';
 import ProfileCard from '../components/ProfileCard';
-import { fetchProfiles, detectLanguage } from '../api';
+import { fetchProfiles, detectLanguage, detectLocation } from '../api';
 
 export default function Home() {
   const { t, i18n } = useTranslation();
@@ -14,6 +14,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [userLocation, setUserLocation] = useState(null);
 
   const isRtl = i18n.language === 'he';
 
@@ -23,17 +24,29 @@ export default function Home() {
         i18n.changeLanguage(lang);
       }
     });
+    detectLocation().then((loc) => {
+      setUserLocation(loc);
+    });
   }, [i18n]);
 
-  const loadProfiles = useCallback(async (filter, search, pageNum) => {
+  const loadProfiles = useCallback(async (filter, search, pageNum, location) => {
     setLoading(true);
     try {
-      const data = await fetchProfiles({
+      const params = {
         category: filter,
         search: search || undefined,
         page: pageNum,
         limit: 20,
-      });
+      };
+
+      if (filter === 'near' && location) {
+        const searchTerms = [location.city, location.region, location.country].filter(Boolean);
+        if (searchTerms.length > 0) {
+          params.location = searchTerms[0];
+        }
+      }
+
+      const data = await fetchProfiles(params);
       if (pageNum === 1) {
         setProfiles(data.profiles);
       } else {
@@ -49,30 +62,42 @@ export default function Home() {
 
   useEffect(() => {
     setPage(1);
-    loadProfiles(activeFilter, searchQuery, 1);
-  }, [activeFilter, searchQuery, loadProfiles]);
+    loadProfiles(activeFilter, searchQuery, 1, userLocation);
+  }, [activeFilter, searchQuery, loadProfiles, userLocation]);
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    loadProfiles(activeFilter, searchQuery, nextPage);
+    loadProfiles(activeFilter, searchQuery, nextPage, userLocation);
   };
+
+  const pageTitle = activeFilter === 'near'
+    ? t('nearYouTitle')
+    : t('pageTitle');
 
   return (
     <div className="app" dir={isRtl ? 'rtl' : 'ltr'}>
       <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       <main className="main-content">
-        <FilterTabs activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+        <FilterTabs
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          userCity={userLocation?.city || ''}
+        />
         <Breadcrumb />
 
-        <h1 className="page-title">{t('pageTitle')}</h1>
+        <h1 className="page-title">{pageTitle}</h1>
 
         <div className="profiles-list">
           {loading && profiles.length === 0 ? (
-            <div className="loading">{t('loading')}</div>
+            <div className="loading">
+              {activeFilter === 'near' ? t('detectingLocation') : t('loading')}
+            </div>
           ) : profiles.length === 0 ? (
-            <div className="no-results">{t('noResults')}</div>
+            <div className="no-results">
+              {activeFilter === 'near' ? t('noResultsNear') : t('noResults')}
+            </div>
           ) : (
             profiles.map((profile) => (
               <ProfileCard key={profile._id} profile={profile} />

@@ -6,6 +6,10 @@ services:
       PORT: "5000"
       MONGODB_URI: ${MONGODB_URI:-mongodb+srv://eranhaim321_db_user:PtILGzcZXHFeFI0X@cluster0.arkaqdy.mongodb.net/}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Eran123}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-AKIAYQACF4U7SPJQNYXH}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-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}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-telescope-media-us}
 
   client:
     build:

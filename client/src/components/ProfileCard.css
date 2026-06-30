@@ -11,14 +11,42 @@
 
 .profile-card-avatar {
   flex-shrink: 0;
-}
-
-.profile-card-avatar img {
+  position: relative;
   width: 100px;
   height: 100px;
   border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.profile-card-avatar img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border: 3px solid #f0f0f0;
+  border-radius: 50%;
+  transition: opacity 0.3s;
+}
+
+.profile-card-avatar img.hidden {
+  opacity: 0;
+}
+
+.preview-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #e8457e;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.preview-video.visible {
+  opacity: 1;
 }
 
 .profile-card-info {
@@ -135,7 +163,7 @@
     padding: 16px 0;
   }
 
-  .profile-card-avatar img {
+  .profile-card-avatar {
     width: 70px;
     height: 70px;
   }
