@@ -14,7 +14,6 @@ function formatNumber(num) {
 
 function resolveUrl(url) {
   if (!url) return '';
-  if (url.startsWith('http')) return url;
   return getS3Url(url);
 }
 
