@@ -28,6 +28,7 @@ export default function ProfileCard({ profile }) {
 
   const avatarUrl = resolveUrl(profile.avatar);
   const previewVideoUrl = resolveUrl(profile.previewVideo);
+  const previewThumbUrl = resolveUrl(profile.previewVideoThumb);
 
   const handleMouseEnter = () => {
     if (previewVideoUrl) {
@@ -61,10 +62,11 @@ export default function ProfileCard({ profile }) {
             ref={videoRef}
             className={`preview-video ${hovering ? 'visible' : ''}`}
             src={previewVideoUrl}
+            poster={previewThumbUrl || undefined}
             muted
             loop
             playsInline
-            preload="none"
+            preload="metadata"
           />
         )}
       </div>

@@ -41,13 +41,34 @@ router.get('/proxy/*', async (req, res) => {
     const key = req.params[0];
     if (!key) return res.status(400).json({ error: 'Missing key' });
 
-    const command = new GetObjectCommand({ Bucket: BUCKET, Key: key });
+    const s3Params = { Bucket: BUCKET, Key: key };
+
+    if (req.headers.range) {
+      s3Params.Range = req.headers.range;
+    }
+
+    const command = new GetObjectCommand(s3Params);
     const response = await s3.send(command);
 
-    res.set('Content-Type', response.ContentType || 'image/jpeg');
-    res.set('Cache-Control', 'public, max-age=86400');
+    const contentType = response.ContentType || 'application/octet-stream';
+    res.set('Content-Type', contentType);
+    res.set('Cache-Control', 'public, max-age=604800');
+    res.set('Accept-Ranges', 'bytes');
+
+    if (response.ContentLength) {
+      res.set('Content-Length', String(response.ContentLength));
+    }
+
+    if (req.headers.range && response.ContentRange) {
+      res.status(206);
+      res.set('Content-Range', response.ContentRange);
+    }
+
     response.Body.pipe(res);
   } catch (err) {
+    if (err.name === 'NoSuchKey') {
+      return res.status(404).json({ error: 'Not found' });
+    }
     res.status(500).json({ error: err.message });
   }
 });

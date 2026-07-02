@@ -42,6 +42,7 @@ const profileSchema = new mongoose.Schema({
   eyes: { type: String, default: '' },
   isVerified: { type: Boolean, default: false },
   previewVideo: { type: String, default: '' },
+  previewVideoThumb: { type: String, default: '' },
 
   createdAt: { type: Date, default: Date.now },
 });
