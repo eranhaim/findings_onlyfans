@@ -2,6 +2,56 @@ const express = require('express');
 const router = express.Router();
 const geoip = require('geoip-lite');
 
+const COUNTRY_NAMES = {
+  IL: 'Israel',
+  US: 'United States',
+  GB: 'United Kingdom',
+  FR: 'France',
+  DE: 'Germany',
+  CA: 'Canada',
+  AU: 'Australia',
+  BR: 'Brazil',
+  ES: 'Spain',
+  IT: 'Italy',
+  NL: 'Netherlands',
+  BE: 'Belgium',
+  CH: 'Switzerland',
+  SE: 'Sweden',
+  NO: 'Norway',
+  DK: 'Denmark',
+  FI: 'Finland',
+  PL: 'Poland',
+  RU: 'Russia',
+  UA: 'Ukraine',
+  JP: 'Japan',
+  KR: 'South Korea',
+  IN: 'India',
+  MX: 'Mexico',
+  AR: 'Argentina',
+  CO: 'Colombia',
+  ZA: 'South Africa',
+  NG: 'Nigeria',
+  EG: 'Egypt',
+  TR: 'Turkey',
+  AE: 'UAE',
+  SA: 'Saudi Arabia',
+  TH: 'Thailand',
+  PH: 'Philippines',
+  SG: 'Singapore',
+  MY: 'Malaysia',
+  ID: 'Indonesia',
+  RO: 'Romania',
+  CZ: 'Czech Republic',
+  PT: 'Portugal',
+  GR: 'Greece',
+  HU: 'Hungary',
+  AT: 'Austria',
+  IE: 'Ireland',
+  NZ: 'New Zealand',
+  CL: 'Chile',
+  PE: 'Peru',
+};
+
 const COUNTRY_TO_LANG = {
   IL: 'he',
   FR: 'fr',
@@ -46,15 +96,20 @@ router.get('/location', (req, res) => {
 
   if (!geo) {
     return res.json({
-      country: 'unknown',
+      countryCode: 'unknown',
+      countryName: '',
       region: '',
       city: '',
       ip: ip || 'localhost',
     });
   }
 
+  const code = geo.country || 'unknown';
+  const countryName = COUNTRY_NAMES[code] || code;
+
   res.json({
-    country: geo.country || 'unknown',
+    countryCode: code,
+    countryName,
     region: geo.region || '',
     city: geo.city || '',
     timezone: geo.timezone || '',

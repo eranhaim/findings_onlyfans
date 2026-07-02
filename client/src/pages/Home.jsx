@@ -39,11 +39,8 @@ export default function Home() {
         limit: 20,
       };
 
-      if (filter === 'near' && location) {
-        const searchTerms = [location.city, location.region, location.country].filter(Boolean);
-        if (searchTerms.length > 0) {
-          params.location = searchTerms[0];
-        }
+      if (filter === 'near' && location && location.countryName) {
+        params.location = location.countryName;
       }
 
       const data = await fetchProfiles(params);
@@ -83,7 +80,7 @@ export default function Home() {
         <FilterTabs
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
-          userCity={userLocation?.city || ''}
+          userCountry={userLocation?.countryName || ''}
         />
         <Breadcrumb />
 

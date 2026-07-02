@@ -10,7 +10,7 @@ const FILTERS = [
   { key: 'near', label: 'filter_near', icon: true },
 ];
 
-export default function FilterTabs({ activeFilter, onFilterChange, userCity }) {
+export default function FilterTabs({ activeFilter, onFilterChange, userCountry }) {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'he';
 
@@ -24,8 +24,8 @@ export default function FilterTabs({ activeFilter, onFilterChange, userCity }) {
         >
           {f.icon && <FaMapMarkerAlt className="near-icon" />}
           {t(f.label)}
-          {f.key === 'near' && userCity && (
-            <span className="near-city"> ({userCity})</span>
+          {f.key === 'near' && userCountry && (
+            <span className="near-city"> ({userCountry})</span>
           )}
         </button>
       ))}

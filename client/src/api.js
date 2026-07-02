@@ -30,7 +30,7 @@ export const detectLocation = async () => {
     const { data } = await api.get('/geo/location');
     return data;
   } catch {
-    return { country: 'unknown', region: '', city: '' };
+    return { countryCode: 'unknown', countryName: '', region: '', city: '' };
   }
 };
 
