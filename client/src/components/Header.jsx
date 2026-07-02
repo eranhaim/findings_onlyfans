@@ -25,26 +25,6 @@ export default function Header({ searchQuery, onSearchChange }) {
             <FaSearch />
           </button>
         </div>
-        <div className="lang-switcher">
-          <button
-            className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
-            onClick={() => i18n.changeLanguage('en')}
-          >
-            EN
-          </button>
-          <button
-            className={`lang-btn ${i18n.language === 'he' ? 'active' : ''}`}
-            onClick={() => i18n.changeLanguage('he')}
-          >
-            HE
-          </button>
-          <button
-            className={`lang-btn ${i18n.language === 'fr' ? 'active' : ''}`}
-            onClick={() => i18n.changeLanguage('fr')}
-          >
-            FR
-          </button>
-        </div>
       </div>
     </header>
   );
