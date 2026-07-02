@@ -4,6 +4,7 @@ const profileSchema = new mongoose.Schema({
   name: { type: String, required: true },
   username: { type: String, required: true, unique: true },
   avatar: { type: String, default: '' },
+  avatarThumb: { type: String, default: '' },
   likes: { type: Number, default: 0 },
   photos: { type: Number, default: 0 },
   videos: { type: Number, default: 0 },

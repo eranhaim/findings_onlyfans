@@ -2,7 +2,6 @@ import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaHeart, FaCamera, FaVideo, FaTag } from 'react-icons/fa';
 import { IoTrendingUp } from 'react-icons/io5';
-import { getS3Url } from '../api';
 import './ProfileCard.css';
 
 function formatNumber(num) {
@@ -10,11 +9,6 @@ function formatNumber(num) {
     return (num / 1000).toFixed(num >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'K';
   }
   return num.toString();
-}
-
-function resolveUrl(url) {
-  if (!url) return '';
-  return getS3Url(url);
 }
 
 export default function ProfileCard({ profile }) {
@@ -26,12 +20,12 @@ export default function ProfileCard({ profile }) {
   const [hovering, setHovering] = useState(false);
   const videoRef = useRef(null);
 
-  const avatarUrl = resolveUrl(profile.avatar);
-  const previewVideoUrl = resolveUrl(profile.previewVideo);
-  const previewThumbUrl = resolveUrl(profile.previewVideoThumb);
+  const avatarSrc = profile.avatarThumbUrl || profile.avatarUrl || '';
+  const videoSrc = profile.previewVideoUrl || '';
+  const videoPoster = profile.previewVideoThumbUrl || '';
 
   const handleMouseEnter = () => {
-    if (previewVideoUrl) {
+    if (videoSrc) {
       setHovering(true);
       videoRef.current?.play()?.catch(() => {});
     }
@@ -53,16 +47,17 @@ export default function ProfileCard({ profile }) {
         onMouseLeave={handleMouseLeave}
       >
         <img
-          src={avatarUrl || 'https://i.pravatar.cc/100'}
+          src={avatarSrc || 'https://i.pravatar.cc/100'}
           alt={profile.name}
-          className={hovering && previewVideoUrl ? 'hidden' : ''}
+          className={hovering && videoSrc ? 'hidden' : ''}
+          loading="lazy"
         />
-        {previewVideoUrl && (
+        {videoSrc && (
           <video
             ref={videoRef}
             className={`preview-video ${hovering ? 'visible' : ''}`}
-            src={previewVideoUrl}
-            poster={previewThumbUrl || undefined}
+            src={videoSrc}
+            poster={videoPoster || undefined}
             muted
             loop
             playsInline

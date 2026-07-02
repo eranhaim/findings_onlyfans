@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Profile = require('../models/Profile');
+const { signProfileUrls } = require('../services/s3');
 
 router.get('/', async (req, res) => {
   try {
@@ -43,8 +44,10 @@ router.get('/', async (req, res) => {
       Profile.countDocuments(query),
     ]);
 
+    const signedProfiles = await Promise.all(profiles.map(signProfileUrls));
+
     res.json({
-      profiles,
+      profiles: signedProfiles,
       total,
       page: parseInt(page),
       totalPages: Math.ceil(total / parseInt(limit)),
@@ -58,7 +61,8 @@ router.get('/:id', async (req, res) => {
   try {
     const profile = await Profile.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: 'Profile not found' });
-    res.json(profile);
+    const signed = await signProfileUrls(profile);
+    res.json(signed);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
