@@ -57,6 +57,21 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/random-near', async (req, res) => {
+  try {
+    const { location, count = 4 } = req.query;
+    const query = location ? { location: { $regex: location, $options: 'i' } } : {};
+    const profiles = await Profile.aggregate([
+      { $match: query },
+      { $sample: { size: parseInt(count) } },
+    ]);
+    const signedProfiles = await Promise.all(profiles.map(signProfileUrls));
+    res.json({ profiles: signedProfiles });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   try {
     const profile = await Profile.findById(req.params.id);

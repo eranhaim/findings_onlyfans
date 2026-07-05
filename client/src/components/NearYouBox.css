@@ -1,0 +1,39 @@
+.near-you-box {
+  background: linear-gradient(135deg, #fff5f8 0%, #fff 100%);
+  border: 2px solid #fce4ec;
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+
+.near-you-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.near-you-icon {
+  color: #e8457e;
+  font-size: 20px;
+}
+
+.near-you-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.near-you-location {
+  font-size: 14px;
+  color: #e8457e;
+  font-weight: 500;
+  background: #fce4ec;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.near-you-profiles {
+  border-top: 1px solid #fce4ec;
+  padding-top: 4px;
+}

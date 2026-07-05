@@ -4,6 +4,8 @@ import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterTabs from '../components/FilterTabs';
 import ProfileCard from '../components/ProfileCard';
+import NearYouBox from '../components/NearYouBox';
+import HoverHint from '../components/HoverHint';
 import { fetchProfiles, detectLanguage, detectLocation } from '../api';
 
 export default function Home() {
@@ -85,6 +87,11 @@ export default function Home() {
         <Breadcrumb />
 
         <h1 className="page-title">{pageTitle}</h1>
+        <p className="page-tagline">{t('tagline')}</p>
+
+        {activeFilter !== 'near' && (
+          <NearYouBox userCountry={userLocation?.countryName || ''} />
+        )}
 
         <div className="profiles-list">
           {loading && profiles.length === 0 ? (
@@ -114,6 +121,8 @@ export default function Home() {
           <div className="loading">{t('loading')}</div>
         )}
       </main>
+
+      <HoverHint />
     </div>
   );
 }

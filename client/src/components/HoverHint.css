@@ -1,0 +1,108 @@
+.hover-hint-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.hover-hint-popup {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 36px;
+  text-align: center;
+  max-width: 320px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slideUp 0.4s ease;
+}
+
+.hover-hint-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hover-hint-close:hover {
+  color: #333;
+}
+
+.hover-hint-animation {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+}
+
+.hover-hint-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.hover-hint-play {
+  font-size: 24px;
+  color: #e8457e;
+  opacity: 0;
+  animation: fadeInPlay 2s ease-in-out infinite;
+}
+
+.hover-hint-cursor {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 22px;
+  color: #333;
+  animation: cursorMove 2s ease-in-out infinite;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.hover-hint-text {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); border: 3px solid transparent; }
+  50% { transform: scale(1.05); border: 3px solid #e8457e; }
+}
+
+@keyframes fadeInPlay {
+  0%, 30% { opacity: 0; }
+  50%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes cursorMove {
+  0% { transform: translate(15px, 15px); }
+  30% { transform: translate(0, 0); }
+  50% { transform: translate(0, 0); }
+  100% { transform: translate(15px, 15px); }
+}

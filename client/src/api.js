@@ -34,6 +34,13 @@ export const detectLocation = async () => {
   }
 };
 
+export const fetchRandomNear = async (location, count = 4) => {
+  const { data } = await api.get('/profiles/random-near', {
+    params: { location, count },
+  });
+  return data.profiles;
+};
+
 // ── Admin API ──
 
 function authHeaders() {
