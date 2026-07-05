@@ -23,6 +23,8 @@ export const translations = {
       nearYouSection: 'Near You',
       detectingLocation: 'Detecting your location...',
       hoverHint: 'Hover over a profile photo to see a preview',
+      ctaOnlyfans: 'My OnlyFans',
+      ctaTelegram: 'My Telegram',
     },
   },
   he: {
@@ -49,6 +51,8 @@ export const translations = {
       nearYouSection: 'באזור שלך',
       detectingLocation: 'מזהה את המיקום שלך...',
       hoverHint: 'העבירו את העכבר מעל תמונת הפרופיל לצפייה בתצוגה מקדימה',
+      ctaOnlyfans: 'האונליפאנס שלי',
+      ctaTelegram: 'הטלגרם שלי',
     },
   },
   fr: {
@@ -75,6 +79,8 @@ export const translations = {
       nearYouSection: 'Près de vous',
       detectingLocation: 'Détection de votre emplacement...',
       hoverHint: 'Survolez une photo de profil pour voir un aperçu',
+      ctaOnlyfans: 'Mon OnlyFans',
+      ctaTelegram: 'Mon Telegram',
     },
   },
 };

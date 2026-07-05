@@ -150,11 +150,57 @@
   font-size: 14px;
   color: #555;
   line-height: 1.5;
-  margin: 0;
+  margin: 0 0 10px 0;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.profile-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.profile-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.cta-onlyfans {
+  background: #00aeef;
+  color: #fff;
+}
+
+.cta-onlyfans:hover {
+  background: #0095cc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 174, 239, 0.3);
+}
+
+.cta-telegram {
+  background: #0088cc;
+  color: #fff;
+}
+
+.cta-telegram:hover {
+  background: #006fa3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);
+}
+
+.cta-icon {
+  font-size: 14px;
 }
 
 @media (max-width: 600px) {
@@ -166,5 +212,10 @@
   .profile-card-avatar {
     width: 70px;
     height: 70px;
+  }
+
+  .profile-cta {
+    padding: 6px 14px;
+    font-size: 12px;
   }
 }

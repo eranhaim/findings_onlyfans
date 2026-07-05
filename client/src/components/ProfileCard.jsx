@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaHeart, FaCamera, FaVideo, FaTag } from 'react-icons/fa';
+import { FaHeart, FaCamera, FaVideo, FaTag, FaTelegram } from 'react-icons/fa';
 import { IoTrendingUp } from 'react-icons/io5';
 import './ProfileCard.css';
 
@@ -23,6 +23,9 @@ export default function ProfileCard({ profile }) {
   const avatarSrc = profile.avatarThumbUrl || profile.avatarUrl || '';
   const videoSrc = profile.previewVideoUrl || '';
   const videoPoster = profile.previewVideoThumbUrl || '';
+
+  const telegramLink = profile.socialLinks?.telegram || '';
+  const onlyfansLink = profile.onlyfansLink || '';
 
   const handleMouseEnter = () => {
     if (videoSrc) {
@@ -67,9 +70,7 @@ export default function ProfileCard({ profile }) {
       </div>
       <div className="profile-card-info">
         <div className="profile-card-header">
-          <a href={profile.onlyfansLink || '#'} target="_blank" rel="noreferrer" className="profile-name">
-            {profile.name}
-          </a>
+          <span className="profile-name">{profile.name}</span>
           {profile.isOnline && (
             <span className="online-badge">🟢 {t('online')} 🟢</span>
           )}
@@ -107,7 +108,30 @@ export default function ProfileCard({ profile }) {
           )}
         </div>
 
-        <p className="profile-card-bio">{bio}</p>
+        {bio && <p className="profile-card-bio">{bio}</p>}
+
+        <div className="profile-card-actions">
+          {onlyfansLink && (
+            <a
+              href={onlyfansLink}
+              target="_blank"
+              rel="noreferrer"
+              className="profile-cta cta-onlyfans"
+            >
+              <span className="cta-icon">🔥</span> {t('ctaOnlyfans')}
+            </a>
+          )}
+          {telegramLink && (
+            <a
+              href={telegramLink}
+              target="_blank"
+              rel="noreferrer"
+              className="profile-cta cta-telegram"
+            >
+              <FaTelegram className="cta-icon" /> {t('ctaTelegram')}
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
