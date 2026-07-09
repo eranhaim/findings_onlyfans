@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import "./AgeGate.css";
 
 function AgeGate({ onConfirm }) {
@@ -10,6 +11,15 @@ function AgeGate({ onConfirm }) {
       setVisible(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (visible) {
+      document.body.classList.add("age-gate-open");
+    } else {
+      document.body.classList.remove("age-gate-open");
+    }
+    return () => document.body.classList.remove("age-gate-open");
+  }, [visible]);
 
   const handleConfirm = () => {
     sessionStorage.setItem("age_confirmed", "1");
@@ -23,7 +33,7 @@ function AgeGate({ onConfirm }) {
 
   if (!visible) return null;
 
-  return (
+  return createPortal(
     <div className="age-gate-overlay">
       <div className="age-gate-modal">
         <div className="age-gate-icon">🔞</div>
@@ -48,7 +58,8 @@ function AgeGate({ onConfirm }) {
           you are of legal age in your jurisdiction.
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
