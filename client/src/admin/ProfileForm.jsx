@@ -168,7 +168,7 @@ export default function ProfileForm() {
               </div>
               <div className="form-group">
                 <label>Avatar URL</label>
-                <input type="url" className="admin-input" value={form.avatar} onChange={(e) => set('avatar', e.target.value)} placeholder="https://..." />
+                <input type="text" className="admin-input" value={form.avatar} onChange={(e) => set('avatar', e.target.value)} placeholder="https://... or S3 key (e.g. profiles/.../avatar.jpeg)" />
               </div>
               <div className="form-group">
                 <label>Age</label>
