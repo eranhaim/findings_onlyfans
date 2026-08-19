@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>FansFinder - Flow Explained</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      padding: 40px 20px;
+      line-height: 1.7;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #a78bfa;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 50px;
+      font-size: 1rem;
+    }
+    .section {
+      max-width: 900px;
+      margin: 0 auto 60px auto;
+    }
+    .section-title {
+      font-size: 1.4rem;
+      color: #f0abfc;
+      border-right: 4px solid #a78bfa;
+      padding-right: 12px;
+      margin-bottom: 20px;
+    }
+    .note {
+      background: #1e1e2e;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+    }
+    .note strong { color: #fbbf24; }
+    .note .emoji { font-size: 1.3rem; margin-left: 8px; }
+
+    .flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .flow-box {
+      background: #1e1e2e;
+      border: 2px solid #4f46e5;
+      border-radius: 12px;
+      padding: 16px 28px;
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+    }
+    .flow-box.browser  { border-color: #22d3ee; }
+    .flow-box.server   { border-color: #4ade80; }
+    .flow-box.db       { border-color: #fb923c; }
+    .flow-box.s3       { border-color: #f472b6; }
+    .flow-box .box-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 4px; }
+    .flow-box.browser .box-title  { color: #22d3ee; }
+    .flow-box.server  .box-title  { color: #4ade80; }
+    .flow-box.db      .box-title  { color: #fb923c; }
+    .flow-box.s3      .box-title  { color: #f472b6; }
+    .flow-box .box-desc { font-size: 0.88rem; color: #aaa; }
+
+    .arrow {
+      font-size: 2rem;
+      color: #555;
+      line-height: 1;
+      margin: 4px 0;
+    }
+    .arrow-label {
+      font-size: 0.78rem;
+      color: #777;
+      margin-top: -4px;
+      margin-bottom: 4px;
+    }
+
+    .component-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) {
+      .component-grid { grid-template-columns: 1fr; }
+    }
+    .comp-card {
+      background: #1e1e2e;
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid #333;
+    }
+    .comp-card .comp-name {
+      font-weight: bold;
+      color: #a78bfa;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+    .comp-card .comp-desc {
+      font-size: 0.88rem;
+      color: #bbb;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    .step-num {
+      background: #4f46e5;
+      color: white;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .step-content { flex: 1; }
+    .step-content .step-title { font-weight: bold; color: #e0e0e0; margin-bottom: 4px; }
+    .step-content .step-desc { font-size: 0.9rem; color: #aaa; }
+    .step-content code {
+      background: #111;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #86efac;
+    }
+
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .schema-table th {
+      background: #2a2a3d;
+      color: #a78bfa;
+      padding: 10px 14px;
+      text-align: right;
+      border-bottom: 2px solid #4f46e5;
+    }
+    .schema-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #222;
+      vertical-align: top;
+    }
+    .schema-table tr:hover td { background: #1a1a2e; }
+    .type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: bold;
+    }
+    .type-string  { background: #1d4ed8; color: #bfdbfe; }
+    .type-number  { background: #065f46; color: #a7f3d0; }
+    .type-boolean { background: #7c3aed; color: #ddd6fe; }
+    .type-date    { background: #92400e; color: #fde68a; }
+    .type-object  { background: #1f2937; color: #9ca3af; }
+    .type-array   { background: #831843; color: #fbcfe8; }
+  </style>
+</head>
+<body>
+
+<h1>🚀 FansFinder — איך האתר עובד</h1>
+<p class="subtitle">הסבר ויזואלי מלא לאדם שרואה את זה בפעם הראשונה</p>
+
+<!-- SECTION 1: BIG PICTURE -->
+<div class="section">
+  <div class="section-title">📦 התמונה הגדולה — מה יש פה?</div>
+
+  <div class="note">
+    <span class="emoji">🧠</span>
+    <strong>בגדול:</strong> האתר הזה הוא ספרייה של פרופילי OnlyFans.
+    אנשים נכנסים, רואים כרטיסים של יוצרים, ולוחצים על כפתור שמוביל אותם לאונליפאנס או טלגרם.
+  </div>
+
+  <div class="note">
+    <span class="emoji">🏗️</span>
+    <strong>יש 4 חלקים עיקריים:</strong><br><br>
+    🖥️ <strong>Frontend (Client)</strong> — מה שהמשתמש רואה בדפדפן. בנוי ב-React.<br>
+    ⚙️ <strong>Backend (Server)</strong> — השרת שמחזיר נתונים. בנוי ב-Node.js + Express.<br>
+    🗄️ <strong>MongoDB</strong> — מסד הנתונים שבו שמורים כל הפרופילים.<br>
+    ☁️ <strong>AWS S3</strong> — שירות ענן שבו שמורות התמונות והווידאו.
+  </div>
+</div>
+
+<!-- SECTION 2: FLOW -->
+<div class="section">
+  <div class="section-title">🔄 Flow — מה קורה כשמשתמש נכנס לאתר?</div>
+
+  <div class="flow">
+    <div class="flow-box browser">
+      <div class="box-title">🌐 הדפדפן של המשתמש</div>
+      <div class="box-desc">נכנס לאתר. React נטען. האתר מתחיל לעבוד.</div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="arrow-label">קורא לשרת: "תן לי פרופילים"</div>
+
+    <div class="flow-box browser">
+      <div class="box-title">🌍 זיהוי מיקום ושפה</div>
+      <div class="box-desc">
+        הדפדפן שולח בקשה לשרת → השרת מסתכל על כתובת ה-IP<br>
+        → מזהה מדינה → קובע שפה (עברית לישראל, צרפתית לצרפת, אנגלית לכולם)
+      </div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="arrow-label">GET /api/profiles?category=top&page=1</div>
+
+    <div class="flow-box server">
+      <div class="box-title">⚙️ השרת (Express)</div>
+      <div class="box-desc">
+        מקבל את הבקשה → שולח שאילתה למונגו → מקבל רשימת פרופילים<br>
+        → לכל פרופיל יוצר URL זמני לתמונה/וידאו מ-S3
+      </div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="arrow-label">Profile.find({ category: 'top' })</div>
+
+    <div class="flow-box db">
+      <div class="box-title">🗄️ MongoDB</div>
+      <div class="box-desc">
+        מחזיר את רשימת הפרופילים עם כל הפרטים<br>
+        (שם, ביו, כמות לייקים, מפתח קובץ ב-S3...)
+      </div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="arrow-label">getSignedUrl() — יוצר לינק זמני (24 שעות)</div>
+
+    <div class="flow-box s3">
+      <div class="box-title">☁️ AWS S3</div>
+      <div class="box-desc">
+        השרת מבקש URL חתום זמני לכל תמונה/וידאו.<br>
+        לא שולח את הקובץ עצמו — רק לינק שתקף 24 שעות.
+      </div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="arrow-label">JSON עם פרופילים + URLs חתומים חוזר לדפדפן</div>
+
+    <div class="flow-box browser">
+      <div class="box-title">🖥️ React מציג את הכרטיסים</div>
+      <div class="box-desc">
+        כל פרופיל הופך לכרטיס.<br>
+        Hover על תמונה → מציג וידאו preview.<br>
+        לחיצה → עובר לאונליפאנס / טלגרם.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: STEP BY STEP -->
+<div class="section">
+  <div class="section-title">👣 שלב אחרי שלב — ממשתמש עד מסד נתונים</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <div class="step-title">משתמש נכנס לאתר</div>
+      <div class="step-desc">
+        הדפדפן טוען את ה-React app. <code>main.jsx</code> מפעיל את הכל.
+        <code>App.jsx</code> קובע את הדפים — <code>/</code> עמוד הבית, <code>/admin</code> פאנל ניהול.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <div class="step-title">זיהוי שפה ומיקום</div>
+      <div class="step-desc">
+        <code>Home.jsx</code> שולח שתי בקשות מיד: זיהוי שפה וזיהוי מיקום.<br>
+        השרת מסתכל על ה-IP → משתמש ב-<code>geoip-lite</code> → מחזיר מדינה ושפה.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <div class="step-title">שליפת פרופילים</div>
+      <div class="step-desc">
+        הדפדפן מבקש פרופילים לפי קטגוריה (top / new / free / popular).<br>
+        השרת מחפש במונגו ומחזיר 20 בכל פעם. לחיצה על "Load More" מביאה עוד 20.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <div class="step-title">חתימה על URLs של מדיה</div>
+      <div class="step-desc">
+        כל פרופיל שמור עם מפתח S3, למשל <code>avatars/anna.jpg</code>.<br>
+        השרת יוצר URL זמני חתום שתקף 24 שעות — מונע שיתוף ישיר של לינקים.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <div class="step-title">הצגת כרטיסים</div>
+      <div class="step-desc">
+        <code>ProfileCard.jsx</code> מציג: תמונה, שם, סטטיסטיקות, ביו, כפתורים.<br>
+        Hover על תמונה → הווידאו מתחיל. יוצאים → הווידאו נעצר וחוזר להתחלה.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-content">
+      <div class="step-title">לחיצה על כפתור</div>
+      <div class="step-desc">
+        כפתור 🔥 OnlyFans → פותח את לינק האונליפאנס בטאב חדש.<br>
+        כפתור טלגרם → פותח את לינק הטלגרם בטאב חדש.<br>
+        הלינקים כוללים tracking לספירת קליקים.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-content">
+      <div class="step-title">פאנל ניהול (Admin)</div>
+      <div class="step-desc">
+        כניסה ל-<code>/admin</code> → מסך סיסמה.<br>
+        הסיסמה מוגדרת ב-<code>.env</code> כ-<code>ADMIN_PASSWORD</code>.<br>
+        אחרי כניסה → אפשר להוסיף / לערוך / למחוק פרופילים.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: COMPONENTS -->
+<div class="section">
+  <div class="section-title">🧩 הקומפוננטות — מה כל קובץ עושה</div>
+  <div class="component-grid">
+    <div class="comp-card">
+      <div class="comp-name">📄 App.jsx</div>
+      <div class="comp-desc">הראוטר הראשי. מחליט איזה עמוד להציג לפי ה-URL.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">🏠 pages/Home.jsx</div>
+      <div class="comp-desc">העמוד הראשי. שולף פרופילים, מזהה מיקום, מציג הכל.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">🃏 ProfileCard.jsx</div>
+      <div class="comp-desc">כרטיס של יוצר. תמונה, ביו, סטטיסטיקות, כפתורי CTA, hover וידאו.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">🔍 Header.jsx</div>
+      <div class="comp-desc">כותרת האתר עם שדה חיפוש.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">🗂️ FilterTabs.jsx</div>
+      <div class="comp-desc">טאבים לסינון: Top / New / Free / Popular / Near You.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">📍 NearYouBox.jsx</div>
+      <div class="comp-desc">קופסה שמציגה יוצרים קרובים למדינה של המשתמש.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">💡 HoverHint.jsx</div>
+      <div class="comp-desc">טיפ קטן שמופיע בפעם הראשונה — "Hover לתצוגה מקדימה".</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">🌍 i18n/translations.js</div>
+      <div class="comp-desc">כל הטקסטים של האתר ב-3 שפות: עברית, אנגלית, צרפתית.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">🔒 AdminLogin.jsx</div>
+      <div class="comp-desc">מסך כניסה לפאנל הניהול עם סיסמה.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">🛠️ AdminDashboard.jsx</div>
+      <div class="comp-desc">רשימת כל הפרופילים עם אפשרות עריכה ומחיקה.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">📝 ProfileForm.jsx</div>
+      <div class="comp-desc">טופס ליצירה או עריכה של פרופיל.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">🔌 api.js</div>
+      <div class="comp-desc">כל הפונקציות שמדברות עם השרת. axios בפנים.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: DB SCHEMA -->
+<div class="section">
+  <div class="section-title">🗄️ מה שמור על כל פרופיל ב-MongoDB</div>
+  <table class="schema-table">
+    <thead>
+      <tr><th>שדה</th><th>סוג</th><th>מה זה אומר</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>name</td><td><span class="type-badge type-string">String</span></td><td>השם להצגה, למשל "Anna K"</td></tr>
+      <tr><td>username</td><td><span class="type-badge type-string">String</span></td><td>שם משתמש ייחודי — לא יכולים להיות שניים אותו דבר</td></tr>
+      <tr><td>avatar</td><td><span class="type-badge type-string">String</span></td><td>מפתח S3 של תמונת הפרופיל (לא URL ישיר!)</td></tr>
+      <tr><td>avatarThumb</td><td><span class="type-badge type-string">String</span></td><td>מפתח S3 של thumbnail קטן לטעינה מהירה</td></tr>
+      <tr><td>previewVideo</td><td><span class="type-badge type-string">String</span></td><td>מפתח S3 של הווידאו שמוצג ב-hover</td></tr>
+      <tr><td>previewVideoThumb</td><td><span class="type-badge type-string">String</span></td><td>תמונה שמוצגת לפני שהווידאו נטען (poster)</td></tr>
+      <tr><td>likes</td><td><span class="type-badge type-number">Number</span></td><td>כמות לייקים — מספר לתצוגה בלבד</td></tr>
+      <tr><td>photos</td><td><span class="type-badge type-number">Number</span></td><td>כמות תמונות — מספר לתצוגה בלבד</td></tr>
+      <tr><td>videos</td><td><span class="type-badge type-number">Number</span></td><td>כמות וידאו — מספר לתצוגה בלבד</td></tr>
+      <tr><td>price</td><td><span class="type-badge type-number">Number</span></td><td>מחיר המנוי בדולר</td></tr>
+      <tr><td>isFree</td><td><span class="type-badge type-boolean">Boolean</span></td><td>האם ניתן לעקוב בחינם?</td></tr>
+      <tr><td>isNewModel</td><td><span class="type-badge type-boolean">Boolean</span></td><td>האם תג "NEW" יוצג על הכרטיס?</td></tr>
+      <tr><td>isOnline</td><td><span class="type-badge type-boolean">Boolean</span></td><td>האם תג "🟢 Online" יוצג?</td></tr>
+      <tr><td>isVerified</td><td><span class="type-badge type-boolean">Boolean</span></td><td>האם הפרופיל מאומת?</td></tr>
+      <tr><td>bio</td><td><span class="type-badge type-object">Object</span></td><td>ביו ב-3 שפות: bio.en / bio.he / bio.fr</td></tr>
+      <tr><td>tags</td><td><span class="type-badge type-array">Array</span></td><td>תגיות, למשל ["blonde", "fitness"]</td></tr>
+      <tr><td>category</td><td><span class="type-badge type-string">String</span></td><td>top / new / free / popular — קובע באיזה טאב מופיע</td></tr>
+      <tr><td>onlyfansLink</td><td><span class="type-badge type-string">String</span></td><td>הלינק לאונליפאנס (עם tracking)</td></tr>
+      <tr><td>socialLinks</td><td><span class="type-badge type-object">Object</span></td><td>instagram / telegram / twitter / tiktok וכו'</td></tr>
+      <tr><td>location</td><td><span class="type-badge type-string">String</span></td><td>מיקום, למשל "Israel" — לפיו מחפשים ב-Near You</td></tr>
+      <tr><td>age</td><td><span class="type-badge type-number">Number</span></td><td>גיל</td></tr>
+      <tr><td>createdAt</td><td><span class="type-badge type-date">Date</span></td><td>מתי הפרופיל נוצר</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 6: API ROUTES -->
+<div class="section">
+  <div class="section-title">🛣️ ה-API של השרת — מה הדפדפן יכול לבקש</div>
+
+  <div class="note">
+    <span class="emoji">📡</span>
+    <strong>Public — כולם יכולים:</strong>
+  </div>
+  <table class="schema-table" style="margin-bottom:20px">
+    <thead><tr><th>URL</th><th>מה מחזיר</th></tr></thead>
+    <tbody>
+      <tr><td>GET /api/profiles</td><td>רשימת פרופילים (עם סינון, חיפוש, עמוד)</td></tr>
+      <tr><td>GET /api/profiles/:id</td><td>פרופיל אחד לפי ID</td></tr>
+      <tr><td>GET /api/profiles/random-near</td><td>פרופילים רנדומליים מאותה מדינה</td></tr>
+      <tr><td>GET /api/geo/detect-language</td><td>שפה לפי IP</td></tr>
+      <tr><td>GET /api/geo/location</td><td>מדינה, עיר, אזור לפי IP</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <span class="emoji">🔒</span>
+    <strong>Admin בלבד — צריך סיסמה:</strong>
+  </div>
+  <table class="schema-table">
+    <thead><tr><th>URL</th><th>מה עושה</th></tr></thead>
+    <tbody>
+      <tr><td>POST /api/admin/login</td><td>כניסה עם סיסמה → מקבל token</td></tr>
+      <tr><td>GET /api/admin/profiles</td><td>כל הפרופילים עם חיפוש</td></tr>
+      <tr><td>POST /api/admin/profiles</td><td>יצירת פרופיל חדש</td></tr>
+      <tr><td>PUT /api/admin/profiles/:id</td><td>עדכון פרופיל קיים</td></tr>
+      <tr><td>DELETE /api/admin/profiles/:id</td><td>מחיקת פרופיל</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 7: S3 -->
+<div class="section">
+  <div class="section-title">☁️ למה S3 ולמה URLs חתומים?</div>
+
+  <div class="note">
+    <span class="emoji">❓</span>
+    <strong>מה זה S3?</strong><br>
+    S3 הוא שירות אחסון קבצים של Amazon. כמו Dropbox אבל לדevelopers.
+    מעלים לשם תמונות וווידאו, והם נשמרים בענן.
+  </div>
+
+  <div class="note">
+    <span class="emoji">🔐</span>
+    <strong>למה URL חתום (Signed URL)?</strong><br><br>
+    הבאקט פרטי — לא כל אחד יכול לגשת ישירות לתמונות.<br>
+    השרת יוצר URL זמני שתקף 24 שעות בלבד.<br>
+    אחרי 24 שעות — הלינק לא עובד יותר.<br><br>
+    זה מונע: שמירה ישירה של לינקים, שיתוף חינמי, עומס על ה-S3.
+  </div>
+
+  <div class="note">
+    <span class="emoji">🏎️</span>
+    <strong>Cache — למה?</strong><br>
+    כדי לא לבקש URL חדש מ-AWS בכל פעם (עולה כסף + איטי),
+    השרת שומר את ה-URLs בזיכרון ל-23 שעות. אחרי זה מחדש אוטומטית.
+  </div>
+</div>
+
+<div style="text-align:center; color:#555; font-size:0.85rem; margin-top:20px; padding-bottom:40px;">
+  Generated for FansFinder codebase — July 2026
+</div>
+
+</body>
+</html>
